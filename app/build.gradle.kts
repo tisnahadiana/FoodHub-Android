@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.deeromptech.foodhub_android"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.deeromptech.foodhub_android"
@@ -56,4 +56,5 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.core.splashscreen)
 }
