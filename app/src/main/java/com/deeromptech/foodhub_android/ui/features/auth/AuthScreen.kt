@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.deeromptech.foodhub_android.R
+import com.deeromptech.foodhub_android.ui.GroupSocialButtons
 import com.deeromptech.foodhub_android.ui.theme.Orange
 
 @Composable
@@ -116,61 +117,9 @@ fun AuthScreen() {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
-            Text(
-                text = stringResource(R.string.sign_in_title),
-                color = Color.White
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Button(
-                    onClick = {},
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                    shape = RoundedCornerShape(32.dp),
-                ) {
-                    Row(
-                        modifier = Modifier.height(38.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ){
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_facebook),
-                            contentDescription = "Facebook",
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.size(8.dp))
-                        Text(
-                            text = stringResource(R.string.sign_with_facebook),
-                            color = Color.Black
-                        )
-                    }
-                }
-
-                Button(
-                    onClick = {},
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                    shape = RoundedCornerShape(32.dp),
-                ) {
-                    Row (
-                        modifier = Modifier.height(38.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ){
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_google),
-                            contentDescription = "Google",
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.size(8.dp))
-                        Text(
-                            text = stringResource(R.string.sign_with_google),
-                            color = Color.Black
-                        )
-                    }
-                }
-            }
-
+            GroupSocialButtons(
+                onFacebookClick = {},
+            ) { }
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
@@ -181,7 +130,7 @@ fun AuthScreen() {
                 border = BorderStroke(1.dp, Color.White)
             ) {
                 Text(
-                    text = stringResource(R.string.sign_in),
+                    text = stringResource(R.string.sign_with_email),
                     color = Color.White,
                 )
             }
