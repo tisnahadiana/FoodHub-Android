@@ -1,3 +1,3 @@
 package com.deeromptech.foodhub_android
 
-val GoogleServerClientID = ""
+val GoogleServerClientID = BuildConfig.GOOGLE_SERVER_CLIENT_ID

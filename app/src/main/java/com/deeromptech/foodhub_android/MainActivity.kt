@@ -8,7 +8,10 @@ import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,7 +27,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.deeromptech.foodhub_android.data.FoodApi
+import com.deeromptech.foodhub_android.data.FoodHubSession
 import com.deeromptech.foodhub_android.ui.features.auth.AuthScreen
+import com.deeromptech.foodhub_android.ui.features.auth.login.SignInScreen
 import com.deeromptech.foodhub_android.ui.features.auth.signup.SignUpScreen
 import com.deeromptech.foodhub_android.ui.navigation.AuthScreen
 import com.deeromptech.foodhub_android.ui.navigation.Home
@@ -40,12 +45,13 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     var showSplashScreen = true
 
     @Inject
     lateinit var foodApi: FoodApi
 
+    @Inject
+    lateinit var session: FoodHubSession
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().apply {
             setKeepOnScreenCondition {
@@ -78,18 +84,41 @@ class MainActivity : ComponentActivity() {
                 zoomX.start()
             }
         }
-
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         setContent {
             FoodHubAndroidTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = AuthScreen,
-                        modifier = Modifier.padding(innerPadding)
+                        startDestination = if (session.getToken() != null) Home else AuthScreen,
+                        modifier = Modifier.padding(innerPadding),
+                        enterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(300)
+                            ) + fadeIn(animationSpec = tween(300))
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(300)
+                            ) + fadeOut(animationSpec = tween(300))
+                        },
+                        popEnterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(300)
+                            ) + fadeIn(animationSpec = tween(300))
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(300)
+                            ) + fadeOut(animationSpec = tween(300))
+                        }
                     ) {
                         composable<SignUp> {
                             SignUpScreen(navController)
@@ -98,17 +127,11 @@ class MainActivity : ComponentActivity() {
                             AuthScreen(navController)
                         }
                         composable<Login> {
-                            Box(modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Green)) {
-
-                            }
+                            SignInScreen(navController)
                         }
                         composable<Home> {
-                            Box(modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.Red)) {
-
+                            Box() {
+                                Text(text = "Home", color = Color.Black)
                             }
                         }
                     }
@@ -117,9 +140,8 @@ class MainActivity : ComponentActivity() {
         }
 
         if (::foodApi.isInitialized) {
-            Log.d("MainActivity", "FoodApi is initialized")
+            Log.d("MainActivity", "FoodApi initialized")
         }
-
         CoroutineScope(Dispatchers.IO).launch {
             delay(3000)
             showSplashScreen = false
